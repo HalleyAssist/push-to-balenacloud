@@ -9,10 +9,17 @@ function retry {
   local n=1
   local max=3
   local delay=1
+  local start_time=$(date +%s)
   while true; do
     "$@" && break || {
       if [[ $n -lt $max ]]; then
         ((n++))
+        local current_time=$(date +%s)
+        local elapsed_time=current_time-start_time
+        if [[ $elapsed_time > 60 ]]; then
+            echo "Command failed. Too late to retry.:"
+            exit 1
+        fi
         echo "Command failed. Attempt $n/$max:"
         sleep $delay;
       else
