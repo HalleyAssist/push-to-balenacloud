@@ -1,4 +1,4 @@
-#!/bin/sh -l
+set -e
 
 function fail {
   echo $1 >&2
@@ -29,4 +29,10 @@ function retry {
   done
 }
 
-cd ${GITHUB_WORKSPACE} && cd ${APPLICATION_PATH} && /balena-cli/balena login --token ${API_TOKEN} && retry /balena-cli/balena push ${APPLICATION_NAME}
+cd ${GITHUB_WORKSPACE} && cd ${APPLICATION_PATH} && /balena-cli/balena login --token ${API_TOKEN}
+
+retry /balena-cli/balena push ${APPLICATION_NAME} | tee /tmp/deploy
+
+release=$(grep Release: /tmp/deploy | awk '{print $3}')
+echo "Found $release"
+echo ::set-output name=release::$(echo "${release}" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")
