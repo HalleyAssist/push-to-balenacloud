@@ -31,7 +31,9 @@ function retry {
 
 cd ${GITHUB_WORKSPACE} && cd ${APPLICATION_PATH} && /balena-cli/balena login --token ${API_TOKEN}
 
+set -o pipefail
 retry /balena-cli/balena push ${APPLICATION_NAME} | tee /tmp/deploy
+set +o pipefail
 
 release=$(grep Release: /tmp/deploy | awk '{print $3}')
 echo "Found $release"
