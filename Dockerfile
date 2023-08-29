@@ -6,8 +6,10 @@ RUN apt-get update && apt-get --yes install curl wget unzip
 # download the standalone balena-cli
 RUN curl -s https://api.github.com/repos/balena-io/balena-cli/releases/latest \
 	| grep "linux" \
+	| grep "x64" \
 	| cut -d : -f 12,3 \
 	| tr -d \" \
+	| grep github | head -n1 \
 	| xargs -I {} sh -c "wget https:{}"
 
 # unzip it
