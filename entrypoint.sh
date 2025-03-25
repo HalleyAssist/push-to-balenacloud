@@ -43,4 +43,4 @@ release_commit=$(grep Release: /tmp/deploy | tail -n1 | awk '{print $3}')
 release_id=$(grep Release: /tmp/deploy | tail -n1 | awk '{print $5}')
 echo "Found $release_commit ($release_id)"
 echo ::set-output name=release_commit::$(echo "${release_commit}" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")
-echo ::set-output name=release_id::$(echo "${release_id}" | sed 's/[^0-9]//g')
+echo ::set-output name=release_id::$(echo "${release_id}" | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | sed 's/[^0-9]//g')
