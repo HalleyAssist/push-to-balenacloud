@@ -35,6 +35,8 @@ set -o pipefail
 retry /balena-cli/balena push ${APPLICATION_NAME} | tee /tmp/deploy
 set +o pipefail
 
-release=$(grep Release: /tmp/deploy | awk '{print $3}')
+release_commit=$(grep Release: /tmp/deploy | awk '{print $3}')
+release_id=$(grep Release: /tmp/deploy | awk '{print $5}')
 echo "Found $release"
-echo ::set-output name=release::$(echo "${release}" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")
+echo ::set-output name=release_commit::$(echo "${release_commit}" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")
+echo ::set-output name=release_id::$(echo "${release_id}" | sed 's/[^0-9]//g')
