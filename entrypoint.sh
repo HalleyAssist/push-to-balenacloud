@@ -31,12 +31,16 @@ function retry {
 
 cd ${GITHUB_WORKSPACE} && cd ${APPLICATION_PATH} && /balena-cli/balena login --token ${API_TOKEN}
 
+if [[ -f /tmp/deploy ]]; then
+  rm /tmp/deploy
+fi
+
 set -o pipefail
 retry /balena-cli/balena push ${APPLICATION_NAME} | tee /tmp/deploy
 set +o pipefail
 
-release_commit=$(grep Release: /tmp/deploy | awk '{print $3}')
-release_id=$(grep Release: /tmp/deploy | awk '{print $5}')
-echo "Found $release"
+release_commit=$(grep Release: /tmp/deploy | tail -n1 | awk '{print $3}')
+release_id=$(grep Release: /tmp/deploy | tail -n1 | awk '{print $5}')
+echo "Found $release_commit ($release_id)"
 echo ::set-output name=release_commit::$(echo "${release_commit}" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g")
 echo ::set-output name=release_id::$(echo "${release_id}" | sed 's/[^0-9]//g')
