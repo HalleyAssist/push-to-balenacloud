@@ -29,14 +29,14 @@ function retry {
   done
 }
 
-cd ${GITHUB_WORKSPACE} && cd ${APPLICATION_PATH} && /balena-cli/balena login --token ${API_TOKEN}
+cd ${GITHUB_WORKSPACE} && cd ${APPLICATION_PATH} && /balena/bin/balena login --token ${API_TOKEN}
 
 if [[ -f /tmp/deploy ]]; then
   rm /tmp/deploy
 fi
 
 set -o pipefail
-retry /balena-cli/balena push ${APPLICATION_NAME} | tee /tmp/deploy
+retry /balena/bin/balena push ${APPLICATION_NAME} | tee /tmp/deploy
 set +o pipefail
 
 release_commit=$(grep Release: /tmp/deploy | tail -n1 | awk '{print $3}')
